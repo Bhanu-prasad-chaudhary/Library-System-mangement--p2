@@ -8,7 +8,7 @@
 
 This project demonstrates the implementation of a Library Management System using SQL. It includes creating and managing tables, performing CRUD operations, and executing advanced SQL queries. The goal is to showcase skills in database design, manipulation, and querying.
 
-![Library_project](https://github.com/najirh/Library-System-Management---P2/blob/main/library.jpg)
+![Library_project](https://github.com/Bhanu-prasad-chaudhary/Library-System-mangement--p2/blob/main/library.jpg)
 
 ## Objectives
 
@@ -20,7 +20,7 @@ This project demonstrates the implementation of a Library Management System usin
 ## Project Structure
 
 ### 1. Database Setup
-![ERD](https://github.com/najirh/Library-System-Management---P2/blob/main/library_erd.png)
+![ERD](https://github.com/Bhanu-prasad-chaudhary/Library-System-mangement--p2/blob/main/library_erd.png)
 
 - **Database Creation**: Created a database named `library_db`.
 - **Table Creation**: Created tables for branches, employees, members, books, issued status, and return status. Each table includes relevant columns and relationships.
@@ -200,13 +200,13 @@ ON b.isbn = ist.issued_book_isbn
 GROUP BY 1
 ```
 
-9. **List Members Who Registered in the Last 180 Days**:
+9. **Task 9: List Members Who Registered in the Last 180 Days**:
 ```sql
 SELECT * FROM members
 WHERE reg_date >= CURRENT_DATE - INTERVAL '180 days';
 ```
 
-10. **List Employees with Their Branch Manager's Name and their branch details**:
+10. **Task 10: List Employees with Their Branch Manager's Name and their branch details**:
 
 ```sql
 SELECT 
@@ -408,7 +408,23 @@ GROUP BY 1, 2
 
 **Task 18: Identify Members Issuing High-Risk Books**  
 Write a query to identify members who have issued books more than twice with the status "damaged" in the books table. Display the member name, book title, and the number of times they've issued damaged books.    
-
+```sql
+SELECT 
+    m.member_name,
+    b.book_title AS book_title,
+    COUNT(*) AS damaged_issue_count
+FROM issued_status as i
+JOIN return_status as rst
+on rst.issued_id = i.issued_id
+JOIN members as m 
+ON m.member_id = i.issued_member_id
+JOIN books as b 
+ON b.isbn = i.issued_book_isbn
+WHERE rst.book_quality = 'damaged'                
+GROUP BY 1,2
+HAVING COUNT(*) > 2
+ORDER BY damaged_issue_count DESC
+```
 
 **Task 19: Stored Procedure**
 Objective:
@@ -486,9 +502,32 @@ Description: Write a CTAS query to create a new table that lists each member and
     Member ID
     Number of overdue books
     Total fines
+```sql
+
+    CREATE TABLE overdue_books_summary AS
+SELECT 
+    ist.issued_member_id AS member_id,
+    COUNT(CASE 
+            WHEN rst.return_date IS NULL 
+                 AND CURRENT_DATE - ist.issued_date > 30 
+            THEN 1 
+          END) AS number_of_overdue_books,
+    SUM(CASE 
+            WHEN rst.return_date IS NULL 
+                 AND CURRENT_DATE - ist.issued_date > 30 
+            THEN (CURRENT_DATE - ist.issued_date - 30) * 0.50 
+            ELSE 0 
+        END) AS total_fines,
+    COUNT(*) AS total_books_issued
+FROM issued_status ist
+LEFT JOIN return_status rst 
+    ON ist.issued_id = rst.issued_id
+GROUP BY 1;
 
 
+SELECT * FROM overdue_books_summary;
 
+```
 ## Reports
 
 - **Database Schema**: Detailed table structures and relationships.
@@ -503,20 +542,49 @@ This project demonstrates the application of SQL skills in creating and managing
 
 1. **Clone the Repository**: Clone this repository to your local machine.
    ```sh
-   git clone https://github.com/najirh/Library-System-Management---P2.git
+   https://github.com/Bhanu-prasad-chaudhary/Library-System-mangement--p2
    ```
 
 2. **Set Up the Database**: Execute the SQL scripts in the `database_setup.sql` file to create and populate the database.
 3. **Run the Queries**: Use the SQL queries in the `analysis_queries.sql` file to perform the analysis.
 4. **Explore and Modify**: Customize the queries as needed to explore different aspects of the data or answer additional questions.
 
-## Author - Zero Analyst
+## Author - Bhanu Prasad Chaudhary
 
-This project showcases SQL skills essential for database management and analysis. For more content on SQL and data analysis, connect with me through the following channels:
+This project is part of my portfolio, showcasing my SQL and PostgreSQL skills as I build my career in data analytics.
 
-- **YouTube**: [Subscribe to my channel for tutorials and insights](https://www.youtube.com/@zero_analyst)
-- **Instagram**: [Follow me for daily tips and updates](https://www.instagram.com/zero_analyst/)
-- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/najirr)
-- **Discord**: [Join our community for learning and collaboration](https://discord.gg/36h5f2Z5PK)
+I am a Computer Engineering graduate with an interest in Data Analytics, Data Science, SQL, and Machine Learning. This project demonstrates my practical experience with PostgreSQL, relational database design, data manipulation, and using SQL to explore data and answer business-related questions.
 
-Thank you for your interest in this project!
+## Skills Demonstrated
+
+* PostgreSQL
+* SQL
+* Relational Database Design
+* Database Management
+* CRUD Operations
+* Data Analysis
+* Data Aggregation
+* JOINs
+* GROUP BY
+* HAVING
+* Subqueries
+* CTAS (Create Table As Select)
+* Date Functions
+* Stored Procedures
+* PL/pgSQL
+* Business Problem Solving
+
+## Connect With Me
+
+GitHub: [Bhanu Prasad Chaudhary](https://github.com/Bhanu-prasad-chaudhary)
+
+LinkedIn: [Bhanu Prasad Chaudhary](https://www.linkedin.com/in/bhanu-chaudhary-7a84082a4/)
+
+Email: [chaudharybhanu20178@gmail.com](mailto:chaudharybhanu20178@gmail.com)
+
+## Credits
+
+This project was inspired by a Library Management System SQL project by Zero Analyst. I recreated and adapted the project as part of my SQL and data analytics learning journey, while practicing PostgreSQL, database design, SQL querying, and analytical problem-solving.
+
+Thank you for visiting my project!
+
